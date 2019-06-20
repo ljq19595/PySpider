@@ -1,5 +1,5 @@
 #coding:utf-8
-import urllib
+from urllib import request
 ######
 #爬虫v0.1 利用urlib 和 字符串内建函数
 ######
@@ -8,11 +8,14 @@ import urllib
 '''
 def getHtml(url):
     # 获取网页内容
-    page = urllib.urlopen(url)
-    html = page.read()
-    return html
+    with request.urlopen(url) as page:
+        html = page.read()
+        return html
 
 def content(html):
+    # python2和python3的request返回的类型不一样，如果是二进制，转一下字符串
+    if (type(html) == bytes):
+        html = html.decode()
     # 内容分割的标签
     str = '<article class="article-content">'
     content = html.partition(str)[2]
@@ -25,8 +28,11 @@ def title(content,beg = 0):
     # 思路是利用str.index()和序列的切片
     try:
         title_list = []
-        while True:   
-            num1 = content.index('】',beg)+3
+        while True:
+            _num1=content.index(']',beg)+1
+            num1 = content.index('】',beg)+1
+            if(_num1<num1):
+                num1=_num1
             num2 = content.index('</p>',num1)
             title_list.append(content[num1:num2])
             beg = num2
@@ -41,7 +47,7 @@ def get_img(content,beg = 0):
         img_list = []
         while True:   
             src1 = content.index('src=',beg)+4
-            src2 = content.index('/></p>',src1)
+            src2 = content.index(' alt=',src1)
             img_list.append(content[src1:src2])
             beg = src2
         
@@ -62,12 +68,12 @@ def many_img(data,beg = 0):
          
 def data_out(title, img):
     #写入文本
-    with open("/home/qq/data.txt", "a+") as fo: # 在你电脑运行的时候这里的地址改一下
+    with open("./data.txt", "a+") as fo: # 在你电脑运行的时候这里的地址改一下
         fo.write('\n')
         for size in range(0, len(title)):
             # 判断img[size]中存在的是不是一个url
-            if len(img[size]) > 70: 
-                img[size] = many_img(img[size])# 调用many_img()方法
+            #if len(img[size]) > 70:
+            #    img[size] = many_img(img[size])# 调用many_img()方法
             fo.write(title[size]+'$'+img[size]+'\n')
         
    
@@ -79,6 +85,9 @@ def data_out(title, img):
 # 实现了爬的单个页面的title和img的url并存入文本
 
 def main_content(html):
+    #python2和python3的request返回的类型不一样，如果是二进制，转一下字符串
+    if (type(html) == bytes):
+        html = html.decode()
 # 首页内容分割的标签
     str = '<div class="content">'
     content = html.partition(str)[2]
@@ -108,7 +117,7 @@ def page_url(content, order = 20, beg = 0):
 def get_order(num):
 # num代表获取的条目数量
     url_list = []
-    page = num / 20 
+    page = num // 20 #整除
     order = num % 20 # 超出一整页的条目
     if num < 20:  # 如果获取的条目数量少于20（一页20个），直接爬取第一页的num条
         url = 'http://bohaishibei.com/post/category/main'
