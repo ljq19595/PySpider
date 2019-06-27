@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 # -*- coding:utf-8 -*-
 #
 #   Author  :   XueWeiHan
@@ -43,7 +43,7 @@ class Content(object):
             data = self.model(**kwargs)
             data.insert()
         else:
-            print 'no model'
+            print('no model')
 
     @staticmethod
     def save_to_file(all_content, str_split=':', path='./data.txt'):
@@ -54,10 +54,10 @@ class Content(object):
         :param path: 文件位置，默认为当前脚本运行的位置，文件名：data.txt
         """
         with open(path, 'w') as fb:
-            print '开始写入文件'
+            print('开始写入文件')
             for content in all_content:
                 content_str = ''
                 for k, v in content.items():
                     content_str += v + str_split
                 fb.write(content_str+'\n')
-            print '写入文件完成'
+            print('写入文件完成')

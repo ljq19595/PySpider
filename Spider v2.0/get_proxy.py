@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 # -*- coding:utf-8 -*-
 #
 #   Author  :   XueWeiHan
@@ -7,7 +7,7 @@
 #   Desc    :   爬代理
 from bs4 import BeautifulSoup
 
-from spider import Spider, Content
+from spider import Spider,Content
 #from model.models import Ip
 
 
